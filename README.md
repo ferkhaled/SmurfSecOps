@@ -1,159 +1,185 @@
-🚀 What is SmurfSecOps Lab?
 
-SmurfSecOps Lab is a beginner-friendly, hands-on Kubernetes + DevSecOps learning playground designed to help you learn by doing — not just reading.
+---
 
-It starts locally on your laptop using a lightweight Kubernetes cluster, then gradually evolves into a secure, production-like environment with DevSecOps practices fully integrated.
+## 🚀 What is SmurfSecOps Lab?
 
-🎯 Who is this for?\ 
-🎓 Students\ 
-👨‍💻 Kubernetes beginners\ 
-🧑‍🔧 Junior DevOps / DevSecOps engineers\ 
-🔐 CKA / CKS learners\ 
-🧪 Anyone who wants practical, real-world skills\ 
-💡 Why this project?\ 
+**SmurfSecOps Lab** is a **beginner-friendly, hands-on Kubernetes + DevSecOps learning playground** designed to help you learn by doing — not just reading.
+
+It starts locally on your laptop using a **lightweight Kubernetes cluster**, then gradually evolves into a **secure, production-like environment** with DevSecOps practices fully integrated.
+
+---
+
+## 🎯 Who is this for?
+
+- 🎓 Students  
+- 👨‍💻 Kubernetes beginners  
+- 🧑‍🔧 Junior DevOps / DevSecOps engineers  
+- 🔐 CKA / CKS learners  
+- 🧪 Anyone who wants **practical, real-world skills**
+
+---
+
+## 💡 Why this project?
 
 Most labs are:
+- ❌ Too complex  
+- ❌ Too resource-heavy  
+- ❌ Not security-focused  
+- ❌ Not reproducible locally  
 
-❌ Too complex
-❌ Too resource-heavy
-❌ Not security-focused
-❌ Not reproducible locally
+👉 **SmurfSecOps Lab is different:**
 
-👉 SmurfSecOps Lab is different:
+- ✅ Runs on an average laptop 💻  
+- ✅ Fully open source  
+- ✅ Step-by-step learning  
+- ✅ Security built-in from day one  
+- ✅ Fun, story-driven approach 🎉  
 
-✅ Runs on an average laptop 💻
-✅ Fully open source
-✅ Step-by-step learning
-✅ Security built-in from day one
-✅ Fun, story-driven approach 🎉
-🧩 The Story
-👨‍💻 clumsy-dev → writes code (sometimes insecure 😅)
-⚙️ handy-ops → deploys and automates
-🛡️ papa-sec → secures everything
-😈 gargamel → tries to steal the Smurfberries 🍓
+---
 
-👉 Your mission:
-Protect the Smurf Village and its Smurfberries using DevSecOps.
+## 🧩 The Story
 
-🏗️ Architecture (Updated & Optimized)
-🧠 Key Design Decision
+- 👨‍💻 `clumsy-dev` → writes code (sometimes insecure 😅)  
+- ⚙️ `handy-ops` → deploys and automates  
+- 🛡️ `papa-sec` → secures everything  
+- 😈 `gargamel` → tries to steal the **Smurfberries 🍓**  
 
-👉 Instead of using two clusters, we use:
+👉 Your mission:  
+**Protect the Smurf Village and its Smurfberries using DevSecOps.**
 
-☸️ ONE Kubernetes Cluster + TWO Namespaces
-🟢 nonprod namespace → development / testing
-🔴 prod namespace → production-like workloads
-🤔 Why namespaces instead of two clusters?
+---
 
-This is intentional and strategic:
+## 🏗️ Architecture (Optimized for Learning)
 
-✅ Benefits for learners
-💻 Runs on low-resource machines
-⚡ Faster setup and troubleshooting
-🧠 Easier to understand core concepts first
-🔁 Faster iteration (no cluster switching)
-✅ Still teaches real-world concepts
-environment separation
-RBAC isolation
-network policies
-promotion flows (nonprod → prod)
-🏢 Real-world note
+### ☸️ One Cluster + Two Namespaces
 
-In real enterprises:
+- 🟢 `nonprod` → development / testing  
+- 🔴 `prod` → production-like workloads  
 
-You often have multiple clusters
-But also multiple namespaces per cluster
+---
 
-👉 This lab teaches the concept first, then later you can extend to:
+### 🤔 Why namespaces instead of two clusters?
 
-multi-cluster
-cloud environments (Terraform)
-💻 Minimum Requirements
+This design is **intentional**:
 
-To ensure smooth experience on most laptops:
+#### ✅ Benefits
+- 💻 Works on low-resource laptops  
+- ⚡ Faster setup and troubleshooting  
+- 🧠 Easier for beginners  
+- 🔁 Faster iteration  
 
-🔹 Minimum (recommended baseline)
-CPU: 4 cores
-RAM: 8 GB
-Disk: 30 GB free
-🔸 Optimal
-CPU: 6–8 cores
-RAM: 12–16 GB
-⚙️ What runs locally
-1 Kubernetes cluster (k3s)
-demo application (BerryShop)
-CI/CD tools (lightweight)
-security tools (on-demand)
-🍓 The Application: SmurfBerries System
+#### ✅ Still teaches real-world concepts
+- environment isolation  
+- RBAC  
+- network policies  
+- promotion workflows  
 
-The lab uses a simple application:
+#### 🏢 Real-world note
+Enterprises often use:
+- multiple clusters  
+- multiple namespaces  
 
-🍓 BerryShop (SmurfBerries Platform)
+👉 This lab teaches **core concepts first**, then evolves later to multi-cluster and cloud.
 
-Used to demonstrate:
+---
 
-API development
-vulnerabilities
-containerization
-deployment
-security testing
-🗺️ Roadmap
-🟢 Foundation
-Setup local environment
-Deploy Kubernetes cluster
-Understand namespaces (nonprod, prod)
-🔵 Application
-Build BerryShop API
-Containerize the app
-🟡 Kubernetes
-Deploy to nonprod
-Expose API
-Promote to prod
-🟠 DevSecOps
-Build CI/CD pipeline
-Add SAST
-Add dependency scanning
-Add container scanning
-Add DAST
-🔴 Security Hardening
-Secure workloads
-Apply RBAC
-Enforce policies
-Protect secrets
-⚫ Detection & Attacks
-Add runtime security
-Simulate attacks (Gargamel 😈)
-Detect abnormal behavior
-🟣 Future Expansion
-Multi-cluster architecture
-Terraform + cloud deployment
-Advanced policies and automation
-🏁 Final Goal
+## 💻 Minimum Requirements
+
+### 🔹 Minimum
+- CPU: **4 cores**  
+- RAM: **8 GB**  
+- Disk: **30 GB free**  
+
+### 🔸 Recommended
+- CPU: **6–8 cores**  
+- RAM: **12–16 GB**  
+
+---
+
+## 🍓 Application: SmurfBerries Platform
+
+### 🍓 BerryShop
+
+A simple application used to demonstrate:
+
+- API development  
+- vulnerabilities  
+- containerization  
+- Kubernetes deployment  
+- security testing  
+
+---
+
+## 🗺️ Roadmap
+
+### 🟢 Foundation
+- Setup local environment  
+- Deploy Kubernetes cluster  
+- Understand namespaces  
+
+### 🔵 Application
+- Build BerryShop API  
+- Containerize the app  
+
+### 🟡 Kubernetes
+- Deploy to `nonprod`  
+- Expose API  
+- Promote to `prod`  
+
+### 🟠 DevSecOps
+- Build CI/CD pipeline  
+- Add SAST  
+- Add dependency scanning  
+- Add container scanning  
+- Add DAST  
+
+### 🔴 Security Hardening
+- Secure workloads  
+- Apply RBAC  
+- Enforce policies  
+- Protect secrets  
+
+### ⚫ Detection & Attacks
+- Add runtime security  
+- Simulate attacks (Gargamel 😈)  
+- Detect abnormal behavior  
+
+### 🟣 Future Expansion
+- Multi-cluster setup  
+- Terraform + cloud  
+- Advanced security policies  
+
+---
+
+## 🏁 Final Goal
 
 By the end of this lab, you will have:
 
-✔️ A complete local DevSecOps playground
-✔️ Real Kubernetes deployment experience
-✔️ Practical security integration skills
-✔️ Strong preparation for CKA / CKS
-✔️ A reusable lab for continuous practice
+- ✔️ A complete DevSecOps playground  
+- ✔️ Real Kubernetes experience  
+- ✔️ Practical security skills  
+- ✔️ Strong preparation for **CKA / CKS**  
+- ✔️ A reusable learning environment  
 
-🎉 Why it works
-🧪 Hands-on learning
-🔁 Fully reproducible
-🧠 Concept-first approach
-🛡️ Security integrated everywhere
-🍓 Fun and memorable theme
-🚀 Ready to start?
+---
 
-👉 Clone the repo
-👉 Follow the first guide
-👉 Build your secure Smurf Village
+## 🎉 Why it works
 
-🍓 Without security, Gargamel steals the Smurfberries 😈
-🛡️ With DevSecOps, the village stays safe
+- 🧪 Hands-on learning  
+- 🔁 Fully reproducible  
+- 🧠 Concept-first approach  
+- 🛡️ Security integrated  
+- 🍓 Fun and memorable  
 
-If you want next step, I can:
+---
 
-generate Vagrant + k3s exact config optimized for 8GB RAM
-or build Article 1 (setup) fully ready for GitHub
+## 🚀 Ready to start?
+
+👉 Clone the repo  
+👉 Follow the first guide  
+👉 Build your secure Smurf Village  
+
+---
+
+> 🍓 Without security, Gargamel steals the Smurfberries 😈  
+> 🛡️ With DevSecOps, the village stays safe  
