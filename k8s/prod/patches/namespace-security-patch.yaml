@@ -1,0 +1,27 @@
+# Pod Security admission labels for berryshop-prod.
+#
+# Production enforces the restricted profile on all three modes.
+# The restricted profile is the most secure built-in option and requires:
+#   - Non-root user (runAsNonRoot: true)
+#   - No privilege escalation (allowPrivilegeEscalation: false)
+#   - Read-only root filesystem (readOnlyRootFilesystem: true)
+#   - All capabilities dropped (capabilities.drop: [ALL])
+#   - seccomp profile set to RuntimeDefault or Localhost
+#
+# All of these are already set in k8s/base/deployment.yaml, so the BerryShop
+# API should pass the restricted profile without changes.
+# If you add a new container or init container, verify it also complies.
+#
+# Compare with nonprod (baseline enforce + restricted warn): prod enforces
+# the stricter profile, so any non-compliant pod is rejected at admission —
+# it will never run, not even for a second.
+#
+# Phase 4: K8s Hardening — see docs/13-k8s-hardening.md
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: berryshop-prod
+  labels:
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/audit: restricted
+    pod-security.kubernetes.io/warn: restricted

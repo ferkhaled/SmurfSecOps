@@ -16,6 +16,13 @@ spec:
         app.kubernetes.io/name: berryshop-api
         app.kubernetes.io/part-of: berryshop
     spec:
+      # Use a dedicated ServiceAccount with automountServiceAccountToken: false.
+      # The default ServiceAccount auto-mounts a cluster credential token into
+      # every pod. Our API does not need cluster API access, so removing the
+      # token shrinks the blast radius if the container is compromised.
+      # Phase 4: K8s Hardening — see docs/13-k8s-hardening.md
+      serviceAccountName: berryshop-api
+
       containers:
         - name: berryshop-api
           # This image tag is intentionally local-first for the starter lab.
@@ -43,8 +50,24 @@ spec:
             initialDelaySeconds: 10
             periodSeconds: 15
           securityContext:
+            # Do not allow the process to gain more privileges than it started with.
             allowPrivilegeEscalation: false
+            # Fail fast if the image tries to run as root (uid 0).
             runAsNonRoot: true
+            # Mount the container's root filesystem as read-only.
+            # Any write attempts go to the /tmp emptyDir volume below.
+            # This stops an attacker from modifying binaries or dropping files.
+            readOnlyRootFilesystem: true
+            # Apply a seccomp profile to restrict which Linux syscalls the
+            # process can make. RuntimeDefault is a safe starting point that
+            # blocks the least-used and most dangerous syscalls.
+            seccompProfile:
+              type: RuntimeDefault
+            # Drop all Linux capabilities and add back only what is needed.
+            # BerryShop API needs no capabilities at all.
+            capabilities:
+              drop:
+                - ALL
           resources:
             requests:
               cpu: 100m
@@ -52,3 +75,12 @@ spec:
             limits:
               cpu: 250m
               memory: 256Mi
+          volumeMounts:
+            # uvicorn writes a pid file and may write to /tmp at startup.
+            # The read-only root filesystem requires an explicit writable mount.
+            - name: tmp
+              mountPath: /tmp
+
+      volumes:
+        - name: tmp
+          emptyDir: {}

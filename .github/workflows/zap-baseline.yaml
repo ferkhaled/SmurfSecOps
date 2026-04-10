@@ -1,0 +1,78 @@
+# DAST workflow — runs OWASP ZAP baseline scan against a live instance of the app.
+#
+# What ZAP baseline scan does:
+#   - Starts a passive spider to discover all reachable URLs.
+#   - Runs passive checks only (no active attacks) — safe to run against any environment.
+#   - Reports issues like missing security headers, information disclosure, and
+#     suspicious response patterns.
+#
+# This workflow starts the BerryShop API locally on the runner, so no external
+# target URL is needed. The `-I` flag tells ZAP to exit 0 even when it finds issues,
+# so the workflow stays green while learners review the HTML report.
+# Remove `-I` when you want ZAP findings to fail the pipeline.
+#
+# Phase 3: Secure development basics — see docs/12-dast.md
+name: zap-baseline
+
+on:
+  workflow_dispatch:
+  # Uncomment the block below to also run on pull requests once the team is
+  # comfortable with ZAP's baseline findings:
+  # pull_request:
+  #   paths:
+  #     - "app/berryshop-api/**"
+
+jobs:
+  baseline-scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install app dependencies
+        working-directory: app/berryshop-api
+        run: pip install -r requirements.txt
+
+      # Start the app as a background process, then wait until /healthz responds.
+      # `--retry` retries up to 5 times with 2-second delays between attempts.
+      - name: Start BerryShop API for scanning
+        working-directory: app/berryshop-api
+        run: |
+          uvicorn src.main:app --host 0.0.0.0 --port 8000 &
+          curl --retry 5 --retry-delay 2 --retry-connrefused \
+            http://localhost:8000/healthz
+
+      # ZAP needs a writable directory on the host for reports.
+      # We mount it as /zap/wrk inside the container.
+      - name: Create ZAP report directory
+        run: mkdir -p zap-report
+
+      # --network host lets ZAP reach localhost:8000 started above.
+      # -t  target URL
+      # -r  HTML report filename (written to /zap/wrk inside the container)
+      # -J  JSON report filename
+      # -I  ignore ZAP exit code (keep the workflow green for learning)
+      - name: Run ZAP baseline scan
+        run: |
+          docker run --rm --network host \
+            -v "$(pwd)/zap-report:/zap/wrk:rw" \
+            ghcr.io/zaproxy/zaproxy:stable \
+            zap-baseline.py \
+              -t http://localhost:8000 \
+              -r zap-report.html \
+              -J zap-report.json \
+              -I
+
+      - name: Upload ZAP report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: zap-baseline-report
+          path: zap-report/
+          retention-days: 7

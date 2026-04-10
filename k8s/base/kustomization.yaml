@@ -1,6 +1,7 @@
 # Base manifests shared by both nonprod and prod overlays.
 resources:
   - namespace.yaml
+  - serviceaccount.yaml
   - configmap.yaml
   - deployment.yaml
   - service.yaml

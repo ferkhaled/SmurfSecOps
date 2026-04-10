@@ -1,0 +1,60 @@
+# NetworkPolicy for berryshop-nonprod namespace.
+#
+# IMPORTANT — CNI REQUIREMENT:
+# NetworkPolicy objects are only enforced when the cluster uses a CNI plugin
+# that supports them. k3s ships with Flannel, which does NOT enforce
+# NetworkPolicy by default. To enforce these policies, replace Flannel with
+# Calico or Cilium. See docs/13-k8s-hardening.md for the Calico install steps.
+# Without a supporting CNI, these objects are stored in etcd but ignored.
+#
+# Two policies are defined here:
+#
+# 1. default-deny-all  — blocks all ingress and egress for every pod in the
+#    namespace unless a more specific policy allows it. This is the principle
+#    of least privilege at the network layer: deny everything, then allow only
+#    what is needed.
+#
+# 2. allow-berryshop-ingress — allows TCP ingress on port 8000 to pods labelled
+#    app.kubernetes.io/name: berryshop-api, and allows UDP egress on port 53
+#    so the pod can resolve DNS names (required even for in-cluster traffic).
+#
+# Phase 4: K8s Hardening — see docs/13-k8s-hardening.md
+# Attack scenario: attacks/scenarios/suspicious-network-activity.md
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-all
+  namespace: berryshop-nonprod
+spec:
+  # Empty podSelector matches all pods in the namespace.
+  podSelector: {}
+  policyTypes:
+    - Ingress
+    - Egress
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-berryshop-ingress
+  namespace: berryshop-nonprod
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: berryshop-api
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    # Allow any source (within the cluster) to reach the API on port 8000.
+    # To restrict further, add a namespaceSelector or podSelector here.
+    - ports:
+        - protocol: TCP
+          port: 8000
+  egress:
+    # DNS is required for the pod to resolve service names and external hosts.
+    # Without this, even in-cluster requests break (e.g. to the Kubernetes API).
+    - ports:
+        - protocol: UDP
+          port: 53

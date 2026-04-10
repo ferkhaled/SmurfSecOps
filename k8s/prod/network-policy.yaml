@@ -1,0 +1,55 @@
+# NetworkPolicy for berryshop-prod namespace.
+#
+# IMPORTANT — CNI REQUIREMENT:
+# NetworkPolicy objects are only enforced when the cluster uses a CNI plugin
+# that supports them. k3s ships with Flannel, which does NOT enforce
+# NetworkPolicy by default. Replace Flannel with Calico or Cilium to enforce
+# these policies. See docs/13-k8s-hardening.md.
+#
+# Production policies are stricter than nonprod:
+# - The default-deny-all rule is identical.
+# - The berryshop-api allow rule permits ingress on port 8000 and egress only
+#   for DNS (port 53). No other outbound traffic is permitted.
+#
+# Why no other egress in prod?
+# The BerryShop API stores data in memory and has no legitimate reason to make
+# outbound calls. If a pod in prod suddenly opens a connection to an external
+# host, that is a strong signal of compromise (data exfiltration, C2 beacon).
+# Blocking it at the NetworkPolicy layer provides defence-in-depth even if
+# Falco is delayed in firing an alert.
+#
+# Phase 4: K8s Hardening — see docs/13-k8s-hardening.md
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-all
+  namespace: berryshop-prod
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+    - Egress
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-berryshop-ingress
+  namespace: berryshop-prod
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: berryshop-api
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - ports:
+        - protocol: TCP
+          port: 8000
+  egress:
+    # DNS only — no other outbound traffic permitted in production.
+    - ports:
+        - protocol: UDP
+          port: 53

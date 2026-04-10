@@ -1,0 +1,75 @@
+# Trivy image scan workflow — runs on pull requests and manual triggers.
+#
+# Two scans are performed:
+#   1. Filesystem scan: checks requirements.txt for vulnerable Python packages
+#      before the image is even built — fast feedback on dependency issues.
+#   2. Image scan: builds the Docker image and scans the full image layer stack
+#      for OS package vulnerabilities and application dependency issues.
+#
+# Both results are uploaded to the GitHub Security tab as SARIF.
+# `exit-code: "0"` keeps the workflow green so learners see findings without
+# being blocked. Change to "1" when you are ready to enforce a quality gate.
+#
+# Phase 3: Secure development basics — see docs/11-dependency-and-image-scanning.md
+name: trivy-image-scan
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "app/berryshop-api/**"
+      - ".github/workflows/trivy-image-scan.yaml"
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  trivy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      # Scan the application directory (requirements.txt + Dockerfile) before
+      # building the image. This catches dependency CVEs in seconds.
+      - name: Scan filesystem (Python dependencies)
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          scan-type: fs
+          scan-ref: app/berryshop-api
+          format: table
+          exit-code: "0"
+          severity: CRITICAL,HIGH
+
+      - name: Build BerryShop API image
+        working-directory: app/berryshop-api
+        run: docker build -t berryshop-api:ci .
+
+      # Full image scan: checks every layer including the OS base image.
+      # ignore-unfixed: true filters out CVEs where no patched version exists yet —
+      # these are real findings but not actionable right now.
+      - name: Scan image with Trivy (SARIF output)
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: berryshop-api:ci
+          format: sarif
+          output: trivy-image-results.sarif
+          exit-code: "0"
+          ignore-unfixed: true
+          severity: CRITICAL,HIGH,MEDIUM
+
+      - name: Upload Trivy SARIF to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: trivy-image-results.sarif
+          category: trivy-image
+
+      - name: Upload Trivy report as artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: trivy-image-report
+          path: trivy-image-results.sarif
+          retention-days: 14

@@ -1,9 +1,11 @@
 # Prod overlay shows how the same app can be promoted with different settings.
 resources:
   - ../base
+  - network-policy.yaml
 
 namespace: berryshop-prod
 
 patches:
   - path: patches/deployment-patch.yaml
   - path: patches/configmap-patch.yaml
+  - path: patches/namespace-security-patch.yaml

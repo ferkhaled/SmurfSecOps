@@ -1,0 +1,28 @@
+# Pod Security admission labels for berryshop-nonprod.
+#
+# Three modes are applied at different levels:
+#
+#   enforce: baseline  — pods that violate the baseline profile are REJECTED.
+#   audit:   restricted — violations are recorded in the audit log (not rejected).
+#   warn:    restricted — violations generate a warning returned to kubectl.
+#
+# Why baseline enforce + restricted audit/warn?
+# This combination is instructive: the namespace enforces the current safe
+# minimum (baseline) while also telling you which pods would fail if you
+# upgraded to the stricter restricted profile. Fix the warnings before
+# promoting to prod, where restricted is enforced.
+#
+# Baseline profile blocks: privileged containers, hostPID, hostIPC,
+# hostNetwork, and a few other dangerous options.
+# Restricted profile additionally requires: non-root user, no privilege
+# escalation, read-only root filesystem, dropped capabilities, seccomp.
+#
+# Phase 4: K8s Hardening — see docs/13-k8s-hardening.md
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: berryshop-nonprod
+  labels:
+    pod-security.kubernetes.io/enforce: baseline
+    pod-security.kubernetes.io/audit: restricted
+    pod-security.kubernetes.io/warn: restricted

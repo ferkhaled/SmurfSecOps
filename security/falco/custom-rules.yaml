@@ -1,0 +1,84 @@
+# SmurfSecOps Lab — Custom Falco Rules
+#
+# These rules are tuned to the BerryShop API container running in the lab.
+# They fire on behaviour that is always suspicious for this specific workload:
+# spawning a shell, making unexpected outbound connections, or reading
+# sensitive credential files.
+#
+# How to load these rules:
+#   kubectl create configmap falco-lab-rules \
+#     --from-file=/lab/security/falco/custom-rules.yaml \
+#     -n falco
+# Then reference the ConfigMap in your Helm values — see security/falco/install.md
+#
+# Phase 5: Detection and response — see docs/14-runtime-detection.md
+
+- rule: Shell Spawned in BerryShop Container
+  desc: >
+    An interactive or non-interactive shell was started inside the
+    berryshop-api container. A legitimate API process has no reason to
+    spawn a shell — this is the most common first step after container
+    compromise (e.g. via a command injection in /api/v1/search).
+    Corresponds to attack scenario: attacks/scenarios/container-shell.md
+  condition: >
+    spawned_process
+    and container
+    and container.image.repository contains "berryshop"
+    and proc.name in (sh, bash, dash, ash, zsh, ksh, fish)
+  output: >
+    Shell spawned in BerryShop container
+    (user=%user.name container=%container.name
+    image=%container.image.repository cmd=%proc.cmdline
+    pid=%proc.pid parent=%proc.pname ns=%k8s.ns.name
+    pod=%k8s.pod.name)
+  priority: WARNING
+  tags: [container, shell, mitre_execution, lab]
+
+- rule: Unexpected Outbound Connection from BerryShop
+  desc: >
+    The berryshop-api container opened an outbound TCP connection to an
+    unexpected destination. The BerryShop API stores data in memory and has
+    no legitimate reason to make outbound calls. Outbound connections may
+    indicate data exfiltration, a reverse shell, or a command-and-control
+    beacon after compromise via the /api/v1/search injection endpoint.
+    Corresponds to attack scenario: attacks/scenarios/suspicious-network-activity.md
+  condition: >
+    outbound
+    and container
+    and container.image.repository contains "berryshop"
+    and not fd.sport in (53)
+  output: >
+    Unexpected outbound connection from BerryShop container
+    (user=%user.name container=%container.name
+    image=%container.image.repository
+    dest=%fd.rip:%fd.rport proto=%fd.proto
+    cmd=%proc.cmdline ns=%k8s.ns.name pod=%k8s.pod.name)
+  priority: WARNING
+  tags: [network, exfil, mitre_command_and_control, lab]
+
+- rule: Sensitive File Access in BerryShop Container
+  desc: >
+    A process inside the berryshop-api container read a sensitive system
+    file. An attacker with shell access will typically probe /etc/passwd for
+    usernames, /etc/shadow for password hashes, or the Kubernetes service
+    account token to attempt cluster privilege escalation.
+    The service account token should not exist because automountServiceAccountToken
+    is false in k8s/base/serviceaccount.yaml — if it appears, investigate.
+    Corresponds to attack scenario: attacks/scenarios/credential-leak.md
+  condition: >
+    open_read
+    and container
+    and container.image.repository contains "berryshop"
+    and fd.name in (
+      /etc/shadow,
+      /etc/passwd,
+      /run/secrets/kubernetes.io/serviceaccount/token,
+      /var/run/secrets/kubernetes.io/serviceaccount/token
+    )
+  output: >
+    Sensitive file read in BerryShop container
+    (user=%user.name file=%fd.name container=%container.name
+    image=%container.image.repository cmd=%proc.cmdline
+    ns=%k8s.ns.name pod=%k8s.pod.name)
+  priority: ERROR
+  tags: [filesystem, credential_access, mitre_credential_access, lab]

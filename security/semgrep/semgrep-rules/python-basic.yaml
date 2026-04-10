@@ -1,14 +1,169 @@
 rules:
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Dangerous runtime patterns
+  # ─────────────────────────────────────────────────────────────────────────────
+
   - id: python-avoid-debug-true
-    message: Avoid leaving debug mode enabled in committed Python code.
+    message: >
+      Avoid leaving debug mode enabled in committed Python code.
+      debug=True enables verbose error pages that expose stack traces and
+      internal configuration to anyone who triggers an exception.
+      Remove this line or gate it on an environment variable.
     severity: WARNING
     languages:
       - python
     pattern: debug=True
+    metadata:
+      cwe: CWE-215
+      owasp: A05:2021
+      lab-note: Fires on app/berryshop-api/src/main.py if debug=True is added to FastAPI().
 
   - id: python-avoid-shell-true
-    message: Prefer safer subprocess usage and avoid shell=True when possible.
+    message: >
+      Prefer safer subprocess usage and avoid shell=True when possible.
+      With shell=True, an attacker who controls any part of the command string
+      can inject arbitrary shell commands (e.g. "; rm -rf /").
+      Build argument lists instead: subprocess.run(["echo", q], ...).
+      Lab: this fires on the /api/v1/search endpoint in main.py — see docs/10-sast.md.
     severity: WARNING
     languages:
       - python
     pattern: subprocess.$FUNC(..., shell=True, ...)
+    metadata:
+      cwe: CWE-78
+      owasp: A03:2021
+      lab-note: Fires on app/berryshop-api/src/main.py search_products().
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Hardcoded secrets
+  # ─────────────────────────────────────────────────────────────────────────────
+
+  - id: python-hardcoded-api-key
+    message: >
+      A string that looks like an API key is hardcoded in source code.
+      Hardcoded credentials can be extracted from git history even after the line
+      is deleted. Use environment variables or a secrets manager instead.
+      Lab: this fires on INTERNAL_API_KEY in app/berryshop-api/src/main.py
+      — see attacks/scenarios/credential-leak.md.
+    severity: ERROR
+    languages:
+      - python
+    patterns:
+      - pattern: $KEY = "..."
+      - metavariable-regex:
+          metavariable: $KEY
+          regex: (?i)(api_key|apikey|api_token|secret_key|access_key|access_token)
+    metadata:
+      cwe: CWE-798
+      owasp: A07:2021
+      lab-note: Fires on INTERNAL_API_KEY = "sk-smurfberry-dev-key-12345" in main.py.
+
+  - id: python-hardcoded-password
+    message: >
+      A string that looks like a password is hardcoded in source code.
+      Even "placeholder" passwords end up in production and in git history.
+      Move credentials to environment variables, Kubernetes Secrets, or a vault.
+    severity: ERROR
+    languages:
+      - python
+    patterns:
+      - pattern: $VAR = "..."
+      - metavariable-regex:
+          metavariable: $VAR
+          regex: (?i)(password|passwd|pwd|db_password|database_password)
+    metadata:
+      cwe: CWE-259
+      owasp: A07:2021
+      lab-note: Add PASSWORD = "hunter2" to main.py to see this rule fire.
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Insecure coding patterns
+  # ─────────────────────────────────────────────────────────────────────────────
+
+  - id: python-insecure-random
+    message: >
+      random.random() is not cryptographically secure.
+      Its output is predictable given enough observations, which matters for
+      tokens, voucher codes, OTPs, or any security-sensitive value.
+      Use secrets.choice(), secrets.token_hex(), or secrets.token_urlsafe() instead.
+      Lab: this fires on the /api/v1/random-pick endpoint in main.py.
+    severity: WARNING
+    languages:
+      - python
+    pattern: random.random(...)
+    metadata:
+      cwe: CWE-338
+      owasp: A02:2021
+      lab-note: Fires on app/berryshop-api/src/main.py random_product().
+
+  - id: python-eval-usage
+    message: >
+      eval() executes an arbitrary Python expression from a string.
+      If any part of the string comes from user input, this is remote code execution.
+      Replace with a safe alternative: ast.literal_eval() for data structures,
+      a lookup table for known operations, or a proper parser.
+    severity: ERROR
+    languages:
+      - python
+    pattern: eval(...)
+    metadata:
+      cwe: CWE-95
+      owasp: A03:2021
+      lab-note: Add eval(request.query_params["x"]) to main.py to see this fire.
+
+  - id: python-path-traversal
+    message: >
+      Opening a file with a path that includes user-supplied input can allow an
+      attacker to read arbitrary files (e.g. ../../etc/passwd).
+      Validate the path with pathlib.Path.resolve() and confirm it stays inside
+      the expected directory before opening.
+    severity: ERROR
+    languages:
+      - python
+    patterns:
+      - pattern: open($PATH, ...)
+      - pattern-not: open("...", ...)
+    metadata:
+      cwe: CWE-22
+      owasp: A01:2021
+      lab-note: Add open(request.query_params["file"]) to main.py to see this fire.
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Kubernetes manifest patterns
+  # ─────────────────────────────────────────────────────────────────────────────
+
+  - id: k8s-privileged-container
+    message: >
+      A container is configured with privileged: true.
+      Privileged containers bypass most Linux kernel security restrictions and
+      can access all host devices — equivalent to running as root on the node.
+      Remove this setting and grant only the specific Linux capabilities required.
+      Lab: try adding privileged: true to k8s/base/deployment.yaml and scan.
+    severity: ERROR
+    languages:
+      - yaml
+    pattern: |
+      securityContext:
+        privileged: true
+    metadata:
+      cwe: CWE-250
+      owasp: A05:2021
+      lab-note: >
+        Scan k8s/ with: semgrep scan --config security/semgrep/semgrep-rules k8s/
+
+  - id: k8s-host-network
+    message: >
+      hostNetwork: true gives a pod direct access to the host network namespace.
+      The pod can reach the node's listening services and the Kubernetes API
+      without going through cluster networking or NetworkPolicy.
+      Use Service and Ingress objects to expose workloads instead.
+    severity: WARNING
+    languages:
+      - yaml
+    pattern: |
+      hostNetwork: true
+    metadata:
+      cwe: CWE-668
+      owasp: A05:2021
+      lab-note: >
+        Scan k8s/ with: semgrep scan --config security/semgrep/semgrep-rules k8s/

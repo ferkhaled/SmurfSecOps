@@ -7,3 +7,7 @@ data:
   CLUSTER_NAME: smurfsecops-nonprod
   WELCOME_BANNER: Welcome to BerryShop API in nonprod
   LOG_LEVEL: debug
+  # DEBUG_MODE is intentionally enabled in nonprod so you can exercise the
+  # /api/v1/debug endpoint and see what information disclosure looks like.
+  # This setting must never be copied to the prod configmap-patch.yaml.
+  DEBUG_MODE: "true"

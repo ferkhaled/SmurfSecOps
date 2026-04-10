@@ -8,3 +8,7 @@ data:
   CLUSTER_NAME: cluster-not-set
   WELCOME_BANNER: Welcome to BerryShop API
   LOG_LEVEL: info
+  # DEBUG_MODE controls the /api/v1/debug endpoint.
+  # false by default — set to "true" only in nonprod for lab exercises.
+  # Leaving this enabled in prod would expose all environment variables.
+  DEBUG_MODE: "false"

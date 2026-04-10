@@ -1,0 +1,68 @@
+# SAST workflow — runs Semgrep static analysis on every pull request.
+#
+# What Semgrep does:
+#   - Scans Python source code and Kubernetes YAML for known-bad patterns.
+#   - Uses both the built-in "auto" rule set and our custom lab rules.
+#   - Outputs results in SARIF format so they appear in the GitHub Security tab.
+#
+# The scan uses `|| true` so the workflow stays green even when findings exist.
+# The goal in the lab is to SEE findings, not to block merges immediately.
+# When you are ready to enforce, remove `|| true` and set `exit-code: "1"`.
+#
+# Phase 3: Secure development basics — see docs/10-sast.md
+name: sast-semgrep
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+# security-events: write is required to upload SARIF to the GitHub Security tab.
+# contents: read is the minimum needed to check out the repository.
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  semgrep:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Semgrep
+        run: pip install semgrep
+
+      # Run with both the built-in auto config and our custom lab rules.
+      # --sarif outputs results in the standard Static Analysis Results Interchange Format.
+      # `|| true` prevents the step from failing so the upload step always runs.
+      - name: Run Semgrep and output SARIF
+        run: |
+          semgrep scan \
+            --config auto \
+            --config security/semgrep/semgrep-rules \
+            --sarif \
+            --output semgrep-results.sarif \
+            . || true
+
+      # Upload to the GitHub Security tab (requires GitHub Advanced Security on private repos,
+      # or the repository must be public). If upload fails, the artifact below is the fallback.
+      - name: Upload SARIF to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: semgrep-results.sarif
+          category: semgrep
+
+      # Always keep a downloadable copy — useful for repos without GitHub Advanced Security.
+      - name: Upload SARIF as artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: semgrep-sarif-results
+          path: semgrep-results.sarif
+          retention-days: 14

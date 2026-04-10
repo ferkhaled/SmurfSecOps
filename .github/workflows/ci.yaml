@@ -1,0 +1,61 @@
+# CI workflow — runs on every push to main and on pull requests.
+# It does three things:
+#   1. Installs dependencies and runs the test suite.
+#   2. Uploads test results as a downloadable artifact.
+#   3. Builds the Docker image to catch any Dockerfile issues early.
+#
+# Phase 2: Delivery basics — see docs/09-ci-pipeline.md
+name: berryshop-ci
+
+on:
+  push:
+    branches:
+      - main
+    # Only trigger when app code or this workflow file changes.
+    # This avoids wasting CI minutes on documentation-only commits.
+    paths:
+      - "app/berryshop-api/**"
+      - ".github/workflows/ci.yaml"
+  pull_request:
+    paths:
+      - "app/berryshop-api/**"
+      - ".github/workflows/ci.yaml"
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install app dependencies
+        working-directory: app/berryshop-api
+        run: pip install -r requirements.txt
+
+      # --tb=short gives a compact traceback on failure — easier to read in CI logs.
+      # --junitxml produces a standard test report that GitHub can display inline.
+      - name: Run unit tests
+        working-directory: app/berryshop-api
+        run: pytest --tb=short --junitxml=test-results.xml
+
+      # Upload test results so they are available in the workflow summary.
+      # The `if: always()` ensures results are uploaded even when tests fail.
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pytest-results
+          path: app/berryshop-api/test-results.xml
+          retention-days: 7
+
+      # Build the image with the git commit SHA as the tag.
+      # This makes every build uniquely traceable back to a commit.
+      - name: Build container image
+        working-directory: app/berryshop-api
+        run: docker build -t berryshop-api:${{ github.sha }} .

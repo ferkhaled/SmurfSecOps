@@ -1,0 +1,70 @@
+# Promotion workflow — manually promotes a tested image tag to production.
+#
+# Teaching goal: show that production changes should require human approval,
+# not just a passing CI run. This workflow uses a GitHub Environment called
+# "production" which can be configured with required reviewers.
+#
+# How to set up the approval gate:
+#   1. Go to Settings → Environments → New environment → name it "production"
+#   2. Enable "Required reviewers" and add the team leads
+#   3. Now every run of this workflow pauses until a reviewer approves it
+#
+# In the lab this workflow performs a dry run — it prints the kubectl command
+# but does not apply it. When you are ready to automate, replace the echo
+# statements with a real kubectl apply step using a kubeconfig secret.
+#
+# Phase 2: Delivery basics — see docs/09-ci-pipeline.md
+name: promote-to-prod
+
+on:
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: "Image tag to promote (e.g. abc1234 — use the git SHA from the CI run)"
+        required: true
+        type: string
+      reason:
+        description: "Short reason for this promotion (shown in the audit log)"
+        required: true
+        type: string
+
+jobs:
+  promote:
+    runs-on: ubuntu-latest
+    # This environment requires a reviewer approval before the job runs.
+    # Remove this line if you do not need an approval gate.
+    environment: production
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Record promotion intent
+        run: |
+          echo "========================================"
+          echo "  BerryShop API — Promotion to prod"
+          echo "========================================"
+          echo "  Image tag : berryshop-api:${{ inputs.image_tag }}"
+          echo "  Reason    : ${{ inputs.reason }}"
+          echo "  Triggered : ${{ github.actor }}"
+          echo "  Timestamp : $(date -u)"
+          echo "========================================"
+
+      # In a real pipeline this step would:
+      #   1. Tag the image in the registry as :latest or :<version>
+      #   2. Update the image tag in k8s/prod/patches/deployment-patch.yaml
+      #   3. Commit the change to main
+      #   4. Or apply directly: kubectl apply -k k8s/prod
+      #
+      # For the lab, apply manually inside the Vagrant VM:
+      - name: Show manual apply command (lab dry-run)
+        run: |
+          echo ""
+          echo "Lab step: SSH into the control-plane VM and run:"
+          echo ""
+          echo "  vagrant ssh handy-ops-shared-cp"
+          echo "  kubectl apply -k /lab/k8s/prod"
+          echo "  kubectl -n berryshop-prod rollout status deployment/berryshop-api"
+          echo ""
+          echo "Replace the image tag in k8s/prod/patches/deployment-patch.yaml"
+          echo "with berryshop-api:${{ inputs.image_tag }} before applying."
