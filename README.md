@@ -1,227 +1,159 @@
-# SmurfSecOps Lab
+🚀 What is SmurfSecOps Lab?
 
-SmurfSecOps Lab is a beginner-friendly, fully reproducible Kubernetes DevSecOps learning lab.
-It starts on a laptop with Vagrant, VirtualBox, and k3s, then leaves clean extension points for later Terraform and cloud work.
+SmurfSecOps Lab is a beginner-friendly, hands-on Kubernetes + DevSecOps learning playground designed to help you learn by doing — not just reading.
 
-The project uses a Smurfs-inspired naming theme to make the lab memorable:
+It starts locally on your laptop using a lightweight Kubernetes cluster, then gradually evolves into a secure, production-like environment with DevSecOps practices fully integrated.
 
-- `clumsy-dev`: the developer who builds and updates the app
-- `handy-ops`: the platform engineer who runs the clusters
-- `papa-sec`: the security admin who hardens and monitors the platform
-- `gargamel`: the attacker used in safe learning simulations
+🎯 Who is this for?
+🎓 Students
+👨‍💻 Kubernetes beginners
+🧑‍🔧 Junior DevOps / DevSecOps engineers
+🔐 CKA / CKS learners
+🧪 Anyone who wants practical, real-world skills
+💡 Why this project?
 
-## Why This Repo Exists
+Most labs are:
 
-Many DevSecOps examples jump straight into cloud complexity.
-This lab takes a slower and more educational path:
+❌ Too complex
+❌ Too resource-heavy
+❌ Not security-focused
+❌ Not reproducible locally
 
-- build a small API first
-- package it into a container
-- deploy it to a local Kubernetes cluster
-- add CI and security checks step by step
-- practice both defense and safe attack simulation
+👉 SmurfSecOps Lab is different:
 
-The first version is intentionally simple.
-It favors readability, reproducibility, and learning over enterprise-style abstraction.
+✅ Runs on an average laptop 💻
+✅ Fully open source
+✅ Step-by-step learning
+✅ Security built-in from day one
+✅ Fun, story-driven approach 🎉
+🧩 The Story
+👨‍💻 clumsy-dev → writes code (sometimes insecure 😅)
+⚙️ handy-ops → deploys and automates
+🛡️ papa-sec → secures everything
+😈 gargamel → tries to steal the Smurfberries 🍓
 
-## Audience
+👉 Your mission:
+Protect the Smurf Village and its Smurfberries using DevSecOps.
 
-- beginners starting with Kubernetes, containers, or DevSecOps
-- students building a practical home lab
-- junior DevOps and DevSecOps learners
-- CKA and CKS learners who want a small but realistic sandbox
+🏗️ Architecture (Updated & Optimized)
+🧠 Key Design Decision
 
-## Goals
+👉 Instead of using two clusters, we use:
 
-- provide a local-first Kubernetes learning lab
-- keep prod and nonprod clearly separated
-- teach one concept at a time with readable code and YAML
-- leave room for later CI, security, and cloud tutorials
-- make every file easy to inspect and modify
+☸️ ONE Kubernetes Cluster + TWO Namespaces
+🟢 nonprod namespace → development / testing
+🔴 prod namespace → production-like workloads
+🤔 Why namespaces instead of two clusters?
 
-## Architecture Summary
+This is intentional and strategic:
 
-The lab now supports two local Vagrant topologies:
+✅ Benefits for learners
+💻 Runs on low-resource machines
+⚡ Faster setup and troubleshooting
+🧠 Easier to understand core concepts first
+🔁 Faster iteration (no cluster switching)
+✅ Still teaches real-world concepts
+environment separation
+RBAC isolation
+network policies
+promotion flows (nonprod → prod)
+🏢 Real-world note
 
-- full lab: two small k3s clusters
-  - `nonprod`: 1 control plane + 1 worker
-  - `prod`: 1 control plane + 1 worker
-- lighter lab: one shared k3s cluster
-  - `single-cluster`: 1 control plane + 1 worker
-  - environments are separated by `berryshop-nonprod` and `berryshop-prod` namespaces
+In real enterprises:
 
-The starter application is `BerryShop API`, a tiny Python FastAPI service.
-It is deployed with simple Kubernetes manifests and Kustomize overlays.
+You often have multiple clusters
+But also multiple namespaces per cluster
 
-```text
-Laptop / Workstation
-|
-+-- Vagrant + VirtualBox
-|   |
-|   +-- full lab topology
-|   |   +-- nonprod cluster
-|   |   |   +-- handy-ops-nonprod-cp
-|   |   |   +-- handy-ops-nonprod-worker
-|   |   |
-|   |   +-- prod cluster
-|   |       +-- handy-ops-prod-cp
-|   |       +-- handy-ops-prod-worker
-|   |
-|   +-- lighter topology
-|       +-- single shared cluster
-|           +-- handy-ops-shared-cp
-|           +-- handy-ops-shared-worker
-|           +-- namespaces: berryshop-nonprod, berryshop-prod
-|
-+-- BerryShop API source code
-+-- Kubernetes manifests
-+-- CI workflow templates
-+-- Security and attack-simulation tutorials
-```
+👉 This lab teaches the concept first, then later you can extend to:
 
-## Repository Map
+multi-cluster
+cloud environments (Terraform)
+💻 Minimum Requirements
 
-```text
-.
-|-- app/                  # Starter application code
-|-- attacks/              # Safe attack simulation exercises
-|-- ci/                   # GitHub Actions starter workflow templates
-|-- docs/                 # Step-by-step learner docs
-|-- k8s/                  # Base manifests and overlays
-|-- security/             # Security tooling notes and examples
-`-- vagrant/              # Local topologies: dual-cluster and single-cluster
-```
+To ensure smooth experience on most laptops:
 
-## Quick Start
+🔹 Minimum (recommended baseline)
+CPU: 4 cores
+RAM: 8 GB
+Disk: 30 GB free
+🔸 Optimal
+CPU: 6–8 cores
+RAM: 12–16 GB
+⚙️ What runs locally
+1 Kubernetes cluster (k3s)
+demo application (BerryShop)
+CI/CD tools (lightweight)
+security tools (on-demand)
+🍓 The Application: SmurfBerries System
 
-### 1. Install prerequisites
+The lab uses a simple application:
 
-See [docs/01-prerequisites.md](docs/01-prerequisites.md) for details.
-At a minimum you should have:
+🍓 BerryShop (SmurfBerries Platform)
 
-- Vagrant
-- VirtualBox
-- Git
-- Python 3.12+
-- Docker or another OCI-compatible image builder
+Used to demonstrate:
 
-### 2. Start the nonprod cluster
+API development
+vulnerabilities
+containerization
+deployment
+security testing
+🗺️ Roadmap
+🟢 Foundation
+Setup local environment
+Deploy Kubernetes cluster
+Understand namespaces (nonprod, prod)
+🔵 Application
+Build BerryShop API
+Containerize the app
+🟡 Kubernetes
+Deploy to nonprod
+Expose API
+Promote to prod
+🟠 DevSecOps
+Build CI/CD pipeline
+Add SAST
+Add dependency scanning
+Add container scanning
+Add DAST
+🔴 Security Hardening
+Secure workloads
+Apply RBAC
+Enforce policies
+Protect secrets
+⚫ Detection & Attacks
+Add runtime security
+Simulate attacks (Gargamel 😈)
+Detect abnormal behavior
+🟣 Future Expansion
+Multi-cluster architecture
+Terraform + cloud deployment
+Advanced policies and automation
+🏁 Final Goal
 
-```powershell
-cd vagrant/nonprod
-vagrant up
-vagrant ssh handy-ops-nonprod-cp -c "kubectl get nodes -o wide"
-```
+By the end of this lab, you will have:
 
-The repo root is synced into the VM at `/lab`, so the VM can see the app and Kubernetes files.
+✔️ A complete local DevSecOps playground
+✔️ Real Kubernetes deployment experience
+✔️ Practical security integration skills
+✔️ Strong preparation for CKA / CKS
+✔️ A reusable lab for continuous practice
 
-### 2a. Lighter option: start the shared cluster
+🎉 Why it works
+🧪 Hands-on learning
+🔁 Fully reproducible
+🧠 Concept-first approach
+🛡️ Security integrated everywhere
+🍓 Fun and memorable theme
+🚀 Ready to start?
 
-If you want a smaller local footprint, use the single shared cluster instead of bringing up both full environments.
+👉 Clone the repo
+👉 Follow the first guide
+👉 Build your secure Smurf Village
 
-```powershell
-cd vagrant/single-cluster
-vagrant up
-vagrant ssh handy-ops-shared-cp -c "kubectl get nodes -o wide"
-vagrant ssh handy-ops-shared-cp -c "kubectl get namespaces"
-```
+🍓 Without security, Gargamel steals the Smurfberries 😈
+🛡️ With DevSecOps, the village stays safe
 
-This topology pre-creates the two environment namespaces:
+If you want next step, I can:
 
-- `berryshop-nonprod`
-- `berryshop-prod`
-
-### 3. Run the BerryShop API locally
-
-```powershell
-cd app/berryshop-api
-python -m venv .venv
-.venv\Scripts\Activate.ps1
-pip install -r requirements.txt
-uvicorn src.main:app --reload
-```
-
-Open `http://127.0.0.1:8000/docs` to inspect the generated API docs.
-
-### 4. Build the container image
-
-```powershell
-cd app/berryshop-api
-docker build -t berryshop-api:0.1.0 .
-docker save berryshop-api:0.1.0 -o berryshop-api.tar
-```
-
-### 5. Import the image into nonprod k3s
-
-```powershell
-cd ..\..\vagrant\nonprod
-vagrant ssh handy-ops-nonprod-cp -c "sudo k3s ctr images import /lab/app/berryshop-api/berryshop-api.tar"
-```
-
-### 6. Deploy to nonprod
-
-```powershell
-cd vagrant/nonprod
-vagrant ssh handy-ops-nonprod-cp -c "kubectl apply -k /lab/k8s/nonprod"
-vagrant ssh handy-ops-nonprod-cp -c "kubectl -n berryshop-nonprod get all"
-```
-
-### 7. Test the API from the cluster
-
-```powershell
-cd vagrant/nonprod
-vagrant ssh handy-ops-nonprod-cp -c "kubectl -n berryshop-nonprod port-forward svc/berryshop-api 8080:80"
-```
-
-Then open:
-
-- `http://127.0.0.1:8080/healthz`
-- `http://127.0.0.1:8080/api/v1/products`
-
-## Roadmap Summary
-
-The starter repo is organized for progressive learning:
-
-1. Stand up nonprod with Vagrant and k3s
-2. Build and containerize BerryShop API
-3. Deploy to nonprod with Kubernetes manifests
-4. Promote the same app into prod
-5. Add CI checks and image scanning
-6. Add SAST, DAST, hardening, and runtime detection
-7. Simulate safe attacker behavior with `gargamel`
-8. Extend to Terraform and cloud later
-
-See [docs/roadmap.md](docs/roadmap.md) for the fuller plan.
-
-## What Is Included Today
-
-- local nonprod and prod Vagrant environments
-- a lighter single-cluster Vagrant environment with prod and nonprod namespaces
-- k3s install and worker join scripts
-- a minimal FastAPI backend for BerryShop
-- starter Kubernetes manifests with Kustomize overlays
-- GitHub Actions workflow templates
-- placeholder security docs for Semgrep, Trivy, ZAP, and Falco
-- Kubernetes security examples for later labs
-- safe attack scenario notes
-
-## Learning Conventions
-
-- comments are added where they teach something useful
-- prod and nonprod are kept separate on purpose
-- examples are small enough to understand in one sitting
-- placeholders are called out clearly instead of hidden behind abstraction
-
-## Suggested Learning Order
-
-1. Read [docs/00-overview.md](docs/00-overview.md)
-2. Follow [docs/01-prerequisites.md](docs/01-prerequisites.md)
-3. Build the nonprod cluster with [docs/02-nonprod-cluster-setup.md](docs/02-nonprod-cluster-setup.md)
-4. Build and containerize the app with [docs/04-build-the-app.md](docs/04-build-the-app.md) and [docs/05-containerize-the-app.md](docs/05-containerize-the-app.md)
-5. Deploy with [docs/06-deploy-to-nonprod.md](docs/06-deploy-to-nonprod.md)
-6. Continue into CI and security topics one tutorial at a time
-
-## License
-
-This project is released under the MIT License.
-See [LICENSE](LICENSE).
+generate Vagrant + k3s exact config optimized for 8GB RAM
+or build Article 1 (setup) fully ready for GitHub
