@@ -25,13 +25,14 @@ The starter workflow keeps things simple by exporting the image to a tar file an
 docker save berryshop-api:0.1.0 -o berryshop-api.tar
 ```
 
-Because the repo is synced into each Vagrant VM at `/lab`, the control-plane VM can import the tar file directly.
+Because the repo is synced into each Vagrant VM at `/lab`, the cluster nodes can import the tar file directly.
 
-## Import into nonprod k3s
+## Import into the shared k3s cluster
 
 ```powershell
-cd ..\..\vagrant\nonprod
-vagrant ssh handy-ops-nonprod-cp -c "sudo k3s ctr images import /lab/app/berryshop-api/berryshop-api.tar"
+cd ..\..\vagrant\single-cluster
+vagrant ssh handy-ops-shared-cp -c "sudo k3s ctr images import /lab/app/berryshop-api/berryshop-api.tar"
+vagrant ssh handy-ops-shared-worker -c "sudo k3s ctr images import /lab/app/berryshop-api/berryshop-api.tar"
 ```
 
 Later tutorials can replace this flow with a private registry or GitHub Container Registry.

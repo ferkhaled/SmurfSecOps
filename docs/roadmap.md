@@ -4,7 +4,7 @@ This roadmap keeps the lab grounded and incremental.
 
 ## Phase 1: Local platform basics
 
-- [x] Vagrant structure for nonprod and prod
+- [x] one shared Vagrant cluster with nonprod and prod namespaces
 - [x] k3s bootstrap scripts
 - [x] starter BerryShop API
 - [x] base Kubernetes manifests and overlays
@@ -13,7 +13,7 @@ This roadmap keeps the lab grounded and incremental.
 
 - [ ] move CI templates into live GitHub workflows
 - [ ] publish images to a registry
-- [ ] automate promotion into prod
+- [ ] automate promotion from `berryshop-nonprod` to `berryshop-prod`
 
 ## Phase 3: Secure development basics
 
@@ -35,5 +35,6 @@ This roadmap keeps the lab grounded and incremental.
 ## Phase 6: Cloud extension
 
 - [ ] introduce Terraform structure
-- [ ] recreate nonprod in a cloud sandbox
+- [ ] recreate the shared lab in a cloud sandbox
+- [ ] optionally split the lab into multiple clusters later
 - [ ] adapt CI and deployment flows for remote infrastructure

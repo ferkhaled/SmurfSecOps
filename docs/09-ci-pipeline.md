@@ -21,5 +21,5 @@ They are templates for later tutorials rather than a complete enterprise pipelin
 
 - move workflow files into `.github/workflows/`
 - publish images to a registry
-- gate promotion on test and scan results
+- gate promotion from `berryshop-nonprod` to `berryshop-prod` on test and scan results
 - split checks into pull request and release workflows

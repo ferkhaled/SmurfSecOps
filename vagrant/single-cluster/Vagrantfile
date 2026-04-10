@@ -1,4 +1,4 @@
-# This Vagrant environment is the lighter local topology for the lab.
+# This Vagrant environment is the default local topology for the lab.
 # It uses one k3s cluster and separates prod and nonprod by namespace.
 
 Vagrant.configure("2") do |config|

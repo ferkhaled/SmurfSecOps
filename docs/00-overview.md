@@ -5,12 +5,12 @@ You can tear it down, rebuild it, and change it without needing a cloud account.
 
 ## Core idea
 
-The lab starts with one simple application and two small clusters:
+The lab starts with one simple application, one shared cluster, and two namespaces:
 
-- `nonprod` for experimentation and mistakes
-- `prod` for promotion and safer deployment habits
+- `berryshop-nonprod` for experimentation and mistakes
+- `berryshop-prod` for promotion and safer deployment habits
 
-This separation helps beginners practice a real delivery flow without large-scale complexity.
+This model keeps the lab lighter while still teaching environment boundaries.
 
 ## Main actors
 

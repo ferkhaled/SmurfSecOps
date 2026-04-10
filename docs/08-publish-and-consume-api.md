@@ -7,7 +7,8 @@ This tutorial is about simple API consumption patterns before adding an external
 Port-forwarding is enough for the first lab:
 
 ```powershell
-kubectl -n berryshop-nonprod port-forward svc/berryshop-api 8080:80
+cd vagrant/single-cluster
+vagrant ssh handy-ops-shared-cp -c "kubectl -n berryshop-nonprod port-forward svc/berryshop-api 8080:80"
 ```
 
 ## Example requests
@@ -32,3 +33,5 @@ Later, you can add:
 - authentication
 - rate limiting
 - an API gateway
+
+The same pattern works for prod if you switch the namespace to `berryshop-prod`.
