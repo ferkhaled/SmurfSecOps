@@ -1,0 +1,10 @@
+# Keep learner-facing text files consistent across platforms.
+# This avoids noisy line-ending changes in Markdown and shell scripts.
+* text=auto
+
+*.md text eol=lf
+*.sh text eol=lf
+*.yaml text eol=lf
+*.yml text eol=lf
+Dockerfile text eol=lf
+Vagrantfile text eol=lf
