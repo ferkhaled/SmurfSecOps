@@ -1,0 +1,14 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: berryshop-api
+spec:
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        environment: prod
+    spec:
+      containers:
+        - name: berryshop-api
+          image: berryshop-api:0.1.0

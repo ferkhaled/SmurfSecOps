@@ -1,0 +1,14 @@
+rules:
+  - id: python-avoid-debug-true
+    message: Avoid leaving debug mode enabled in committed Python code.
+    severity: WARNING
+    languages:
+      - python
+    pattern: debug=True
+
+  - id: python-avoid-shell-true
+    message: Prefer safer subprocess usage and avoid shell=True when possible.
+    severity: WARNING
+    languages:
+      - python
+    pattern: subprocess.$FUNC(..., shell=True, ...)

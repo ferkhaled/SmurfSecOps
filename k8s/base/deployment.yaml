@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: berryshop-api
+  labels:
+    app.kubernetes.io/name: berryshop-api
+    app.kubernetes.io/part-of: berryshop
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: berryshop-api
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: berryshop-api
+        app.kubernetes.io/part-of: berryshop
+    spec:
+      containers:
+        - name: berryshop-api
+          # This image tag is intentionally local-first for the starter lab.
+          image: berryshop-api:0.1.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+              name: http
+          envFrom:
+            - configMapRef:
+                name: berryshop-api-config
+            - secretRef:
+                name: berryshop-api-secrets
+                optional: true
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 15
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi

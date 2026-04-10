@@ -1,0 +1,25 @@
+# Copy this file into .github/workflows/sast-semgrep.yaml when you are ready.
+name: sast-semgrep
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  semgrep:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Semgrep
+        run: pip install semgrep
+
+      - name: Run Semgrep against the repo
+        run: semgrep scan --config auto --config security/semgrep/semgrep-rules .

@@ -1,0 +1,56 @@
+# This Vagrant environment stands up the prod learning cluster.
+# It mirrors nonprod closely so promotion feels familiar and teachable.
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "ubuntu/jammy64"
+
+  # Sync the full repository into the VMs so the control plane can reach the
+  # same app source and manifests used in nonprod.
+  config.vm.synced_folder "../..", "/lab"
+
+  nodes = [
+    {
+      name: "handy-ops-prod-cp",
+      hostname: "handy-ops-prod-cp",
+      ip: "192.168.56.21",
+      memory: 2048,
+      cpus: 2,
+      role: "server"
+    },
+    {
+      name: "handy-ops-prod-worker",
+      hostname: "handy-ops-prod-worker",
+      ip: "192.168.56.22",
+      memory: 1536,
+      cpus: 2,
+      role: "agent"
+    }
+  ]
+
+  nodes.each do |node|
+    config.vm.define node[:name] do |machine|
+      machine.vm.hostname = node[:hostname]
+      machine.vm.network "private_network", ip: node[:ip]
+
+      machine.vm.provider "virtualbox" do |vb|
+        vb.name = node[:name]
+        vb.memory = node[:memory]
+        vb.cpus = node[:cpus]
+      end
+
+      machine.vm.provision "shell",
+        path: "scripts/common.sh",
+        args: ["prod"]
+
+      if node[:role] == "server"
+        machine.vm.provision "shell",
+          path: "scripts/install-k3s-server.sh",
+          args: ["prod", node[:ip]]
+      else
+        machine.vm.provision "shell",
+          path: "scripts/install-k3s-agent.sh",
+          args: ["prod", "192.168.56.21"]
+      end
+    end
+  end
+end

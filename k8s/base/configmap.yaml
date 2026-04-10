@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: berryshop-api-config
+data:
+  # These values are patched by each overlay to make environment differences visible.
+  APP_ENV: base
+  CLUSTER_NAME: cluster-not-set
+  WELCOME_BANNER: Welcome to BerryShop API
+  LOG_LEVEL: info

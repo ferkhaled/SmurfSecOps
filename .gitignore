@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+
+# Editor and OS files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Vagrant and VM artifacts
+.vagrant/
+*.box
+node-token
+
+# Container build artifacts
+app/berryshop-api/*.tar
+
+# General logs and temp files
+*.log
+*.tmp
+*.swp

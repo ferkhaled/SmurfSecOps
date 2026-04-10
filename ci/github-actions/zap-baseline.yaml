@@ -1,0 +1,23 @@
+# Copy this file into .github/workflows/zap-baseline.yaml when you are ready.
+name: zap-baseline
+
+on:
+  workflow_dispatch:
+
+jobs:
+  baseline-scan:
+    runs-on: ubuntu-latest
+    env:
+      TARGET_URL: ${{ vars.ZAP_TARGET_URL }}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Run ZAP baseline scan if a target URL is configured
+        run: |
+          if [ -z "${TARGET_URL}" ]; then
+            echo "ZAP_TARGET_URL is not set. Skipping baseline scan."
+            exit 0
+          fi
+          docker run --rm -t ghcr.io/zaproxy/zaproxy:stable zap-baseline.py -t "${TARGET_URL}"

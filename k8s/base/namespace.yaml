@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  # Overlays rename this namespace to match each environment.
+  name: berryshop
+  labels:
+    app.kubernetes.io/part-of: berryshop

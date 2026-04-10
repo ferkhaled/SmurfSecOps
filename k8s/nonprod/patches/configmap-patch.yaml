@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: berryshop-api-config
+data:
+  APP_ENV: nonprod
+  CLUSTER_NAME: smurfsecops-nonprod
+  WELCOME_BANNER: Welcome to BerryShop API in nonprod
+  LOG_LEVEL: debug

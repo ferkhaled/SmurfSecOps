@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: berryshop-readonly
+  namespace: berryshop-nonprod
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: berryshop-pod-reader
+  namespace: berryshop-nonprod
+rules:
+  # This example grants read-only access to pods and services.
+  - apiGroups: [""]
+    resources:
+      - pods
+      - services
+    verbs:
+      - get
+      - list
+      - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: berryshop-pod-reader-binding
+  namespace: berryshop-nonprod
+subjects:
+  - kind: ServiceAccount
+    name: berryshop-readonly
+    namespace: berryshop-nonprod
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: berryshop-pod-reader

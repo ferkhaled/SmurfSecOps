@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: berryshop-api-config
+data:
+  APP_ENV: prod
+  CLUSTER_NAME: smurfsecops-prod
+  WELCOME_BANNER: Welcome to BerryShop API in prod
+  LOG_LEVEL: info

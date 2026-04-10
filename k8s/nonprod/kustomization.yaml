@@ -1,0 +1,9 @@
+# Nonprod overlay keeps things small and easy to inspect.
+resources:
+  - ../base
+
+namespace: berryshop-nonprod
+
+patches:
+  - path: patches/deployment-patch.yaml
+  - path: patches/configmap-patch.yaml

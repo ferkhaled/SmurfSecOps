@@ -1,0 +1,18 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: berryshop-api-allow-same-namespace
+  namespace: berryshop-nonprod
+spec:
+  # This example allows ingress only from pods in the same namespace.
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: berryshop-api
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector: {}
+      ports:
+        - protocol: TCP
+          port: 8000
