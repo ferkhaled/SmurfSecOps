@@ -1,118 +1,146 @@
-🛡️ SmurfSecOps Lab 🍓
-> A hands-on Kubernetes + DevSecOps playground — learn by building, breaking, and securing your own Smurf Village.
----
-🚀 What is SmurfSecOps Lab?
-SmurfSecOps Lab is a beginner-friendly, reproducible DevSecOps learning environment designed to run locally on your laptop.
-Instead of learning only theory, you will:
-☸️ Build a Kubernetes cluster
-📦 Deploy a real application
-🔄 Implement CI/CD
-🛡️ Add security controls
-😈 Simulate attacks
-🔍 Detect and respond
-👉 All in one place. Step by step.
----
+# SmurfSecOps Lab — Complete DevSecOps Series Overview
+
+<!-- VITRINE ARTICLE — already written, paste content here -->
+<!-- This is the showcase article that links all parts of the series together. -->
+<!-- It serves as the entry point for new readers discovering the series. -->
+ SmurfSecOps Lab — A Complete DevSecOps Learning Journey 🍓
+Khaled Ferchichi
+Khaled Ferchichi
+3 min read
+·
+3 hours ago
+
+
+
+
+
+🧭 Introduction
+When learning Kubernetes and DevSecOps, most of us face the same problem:
+
+too much theory
+not enough practice
+and very few end-to-end examples
+So instead of just preparing for certifications like CKA / CKS, I decided to build something different:
+
+A complete, hands-on learning playground — from zero to a real DevSecOps workflow.
+
+This is how SmurfSecOps Lab was born.
+
 🤔 Why Smurfs? 😄
-Because learning should be memorable.
-In this lab:
-👨‍💻 `clumsy-dev` → builds and breaks things
-⚙️ `handy-ops` → runs the platform
-🛡️ `papa-sec` → secures everything
-😈 `gargamel` → attacks the system
-👉 Your mission: protect the Smurf Village and its Smurfberries 🍓
----
-🧠 Project Model
-We use a simple but realistic architecture:
-☸️ One Kubernetes cluster (k3s)
-🧩 Two namespaces:
-`berryshop-nonprod`
-`berryshop-prod`
----
-🎯 Who is this for?
-🎓 Students building a home lab
-👨‍💻 Beginners in Kubernetes / DevOps
-🧑‍🔧 Junior DevSecOps engineers
-🔐 CKA / CKS learners
-🧪 Anyone who prefers learning by doing
----
-🏗️ Architecture Overview
-```
-💻 Your Laptop
-|
-+-- 🧰 Vagrant + VirtualBox
-|   |
-|   +-- ☸️ k3s Cluster
-|       +-- 🧠 Control Plane (handy-ops)
-|       +-- ⚙️ Worker Node
-|       +-- 🟢 berryshop-nonprod
-|       +-- 🔴 berryshop-prod
-|
-+-- 🍓 BerryShop API
-+-- 📦 Kubernetes manifests
-+-- 🔄 CI/CD templates
-+-- 🛡️ Security tools & scenarios
-```
----
-📁 Repository Structure
-```
-.
-├── app/           🍓 Application code (BerryShop)
-├── attacks/       😈 Attack simulations
-├── ci/            🔄 CI/CD workflows
-├── docs/          📚 Step-by-step guides
-├── k8s/           ☸️ Kubernetes manifests
-├── security/      🛡️ Security tools & examples
-└── vagrant/       🧰 Local Kubernetes platform
-```
----
-⚡ Quick Start
-1️⃣ Install prerequisites
-👉 See: `docs/01-prerequisites.md`
----
-2️⃣ Start the cluster
-```
-cd vagrant/single-cluster
-vagrant up
-```
----
-3️⃣ Run the BerryShop API locally
-```
-cd app/berryshop-api
-python -m venv .venv
-.venv\Scripts\Activate.ps1
-pip install -r requirements.txt
-uvicorn src.main:app --reload
-```
----
-4️⃣ Build the container
-```
-docker build -t berryshop-api:0.1.0 .
-docker save berryshop-api:0.1.0 -o berryshop-api.tar
-```
----
-5️⃣ Deploy to Kubernetes
-```
-kubectl apply -k /lab/k8s/nonprod
-kubectl apply -k /lab/k8s/prod
-```
----
-🗺️ Roadmap
-Setup local Kubernetes
-Build and containerize app
-Deploy to nonprod / prod
-Add CI/CD
-Integrate security tools
-Simulate attacks
-Extend to cloud
----
+While working on this project, my son had (and still has 😊) his favorite stuffed toy — Clumsy Smurf — and loved watching The Smurfs.
+
+That became the inspiration.
+
+Instead of another “serious” lab, I built a story-driven environment where:
+
+👨‍💻 clumsy-dev writes code (and makes mistakes 😅)
+⚙️ handy-ops deploys and automates
+🛡️ papa-sec protects the system
+😈 gargamel tries to break it
+👉 Learning becomes a story — not just a checklist.
+
+🎯 What this project is about
+This series is a step-by-step journey to build a complete DevSecOps environment:
+
+starting locally on your laptop
+deploying applications to Kubernetes
+integrating security into CI/CD
+simulating real attacks and defenses
+📦 Project Repository
+All the code and configurations are available here:
+
+👉 https://github.com/ferkhaled/SmurfSecOps
+
+This includes:
+
+Kubernetes setup
+Application code
+CI/CD pipelines
+Security tools integration
+⚙️ Technology Stack (and Why These Choices)
+One of the key objectives of this project is simplicity without losing real-world relevance.
+
+Here is the stack used:
+
+☸️ Kubernetes — k3s
+🖥️ Local Environment — Vagrant + VirtualBox
+🐍 Application — Python + FastAPI
+📦 Containerization — Docker
+🔄 CI/CD — GitHub Actions
+🔍 SAST — Semgrep
+🛡️ Vulnerability Scanning — Trivy
+🌐 DAST — OWASP ZAP
+🚨 Runtime Security — Falco
+🗺️ Roadmap of the Series
+This series is structured as a progressive learning path.
+
+🟢 Phase 1 — Foundations
+We start by setting up a local Kubernetes environment.
+
+Download the Medium app
+👉 Part 1 — Local Environment Setup
+👉 [Add link here]
+
+🔵 Phase 2 — Application
+We build a simple application (BerryShop 🍓) that will be used across the lab.
+
+👉 Part 2 — Build the Application
+👉 [Add link here]
+
+🟡 Phase 3 — Kubernetes Deployment
+We deploy the application and introduce environment separation:
+
+👉 Part 3 — Deploy to Kubernetes
+👉 [Add link here]
+
+🟠 Phase 4 — DevSecOps Pipeline
+👉 Part 4 — CI/CD Pipeline
+👉 [Add link here]
+
+🔴 Phase 5 — Security Hardening
+👉 Part 5 — Kubernetes Hardening
+👉 [Add link here]
+
+⚫ Phase 6 — Attacks & Detection
+👉 Part 6 — Attack Simulation & Detection
+👉 [Add link here]
+
+🟣 Phase 7 — Evolution
+👉 Part 7 — Cloud & Terraform
+👉 [Add link here]
+
+🧠 How to use this series
+Follow the articles in order
+Do not skip steps
+Experiment and break things
+Learn by doing
 🏁 Final Goal
-✔️ DevSecOps playground
-✔️ Kubernetes experience
-✔️ Security mindset
-✔️ CKA / CKS preparation
----
+By the end of this series, you will have:
+
+a complete DevSecOps playground
+real Kubernetes experience
+practical security skills
+strong preparation for CKA / CKS
+🔄 This article will be updated
+This post acts as a central index.
+
+👉 New article links will be added as the series grows.
+
+🚀 Start Here
+👉 Part 1 — Local Environment Setup
+👉 [Add link here]
+
 💬 Final Note
-Built with the help of AI tools — welcome to the AI era 🚀
----
-📜 License
-MIT License
+This series also reflects something important about the current era.
+
+It was:
+
+✍️ written with the help of AI (ChatGPT)
+⚙️ code generated / vibe-coded using Claude
+We are entering a new phase — where building, learning, and experimenting are faster than ever.
+
+👉 The goal is not just to use these tools, but to understand and build meaningful, secure systems with them.
+
+🍓 Without security, Gargamel steals the Smurfberries 😈
+🛡️ With DevSecOps, the village stays safe
+
