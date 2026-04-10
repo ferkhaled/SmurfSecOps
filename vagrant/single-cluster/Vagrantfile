@@ -1,0 +1,59 @@
+# This Vagrant environment is the lighter local topology for the lab.
+# It uses one k3s cluster and separates prod and nonprod by namespace.
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "ubuntu/jammy64"
+
+  # Sync the whole repository into the VMs so the cluster can read manifests,
+  # app artifacts, and docs directly from the shared workspace.
+  config.vm.synced_folder "../..", "/lab"
+
+  nodes = [
+    {
+      name: "handy-ops-shared-cp",
+      hostname: "handy-ops-shared-cp",
+      ip: "192.168.56.31",
+      memory: 2048,
+      cpus: 2,
+      role: "server"
+    },
+    {
+      name: "handy-ops-shared-worker",
+      hostname: "handy-ops-shared-worker",
+      ip: "192.168.56.32",
+      memory: 1536,
+      cpus: 2,
+      role: "agent"
+    }
+  ]
+
+  nodes.each do |node|
+    config.vm.define node[:name] do |machine|
+      machine.vm.hostname = node[:hostname]
+      machine.vm.network "private_network", ip: node[:ip]
+
+      machine.vm.provider "virtualbox" do |vb|
+        vb.name = node[:name]
+        vb.memory = node[:memory]
+        vb.cpus = node[:cpus]
+      end
+
+      machine.vm.provision "shell",
+        path: "scripts/common.sh",
+        args: ["single-cluster"]
+
+      if node[:role] == "server"
+        machine.vm.provision "shell",
+          path: "scripts/install-k3s-server.sh",
+          args: ["single-cluster", node[:ip]]
+
+        machine.vm.provision "shell",
+          path: "scripts/bootstrap-environment-namespaces.sh"
+      else
+        machine.vm.provision "shell",
+          path: "scripts/install-k3s-agent.sh",
+          args: ["single-cluster", "192.168.56.31"]
+      end
+    end
+  end
+end

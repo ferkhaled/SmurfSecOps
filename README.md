@@ -41,10 +41,14 @@ It favors readability, reproducibility, and learning over enterprise-style abstr
 
 ## Architecture Summary
 
-The lab starts with two small k3s clusters managed by Vagrant:
+The lab now supports two local Vagrant topologies:
 
-- `nonprod`: 1 control plane + 1 worker
-- `prod`: 1 control plane + 1 worker
+- full lab: two small k3s clusters
+  - `nonprod`: 1 control plane + 1 worker
+  - `prod`: 1 control plane + 1 worker
+- lighter lab: one shared k3s cluster
+  - `single-cluster`: 1 control plane + 1 worker
+  - environments are separated by `berryshop-nonprod` and `berryshop-prod` namespaces
 
 The starter application is `BerryShop API`, a tiny Python FastAPI service.
 It is deployed with simple Kubernetes manifests and Kustomize overlays.
@@ -54,13 +58,20 @@ Laptop / Workstation
 |
 +-- Vagrant + VirtualBox
 |   |
-|   +-- nonprod cluster
-|   |   +-- handy-ops-nonprod-cp
-|   |   +-- handy-ops-nonprod-worker
+|   +-- full lab topology
+|   |   +-- nonprod cluster
+|   |   |   +-- handy-ops-nonprod-cp
+|   |   |   +-- handy-ops-nonprod-worker
+|   |   |
+|   |   +-- prod cluster
+|   |       +-- handy-ops-prod-cp
+|   |       +-- handy-ops-prod-worker
 |   |
-|   +-- prod cluster
-|       +-- handy-ops-prod-cp
-|       +-- handy-ops-prod-worker
+|   +-- lighter topology
+|       +-- single shared cluster
+|           +-- handy-ops-shared-cp
+|           +-- handy-ops-shared-worker
+|           +-- namespaces: berryshop-nonprod, berryshop-prod
 |
 +-- BerryShop API source code
 +-- Kubernetes manifests
@@ -78,7 +89,7 @@ Laptop / Workstation
 |-- docs/                 # Step-by-step learner docs
 |-- k8s/                  # Base manifests and overlays
 |-- security/             # Security tooling notes and examples
-`-- vagrant/              # Local clusters for nonprod and prod
+`-- vagrant/              # Local topologies: dual-cluster and single-cluster
 ```
 
 ## Quick Start
@@ -103,6 +114,22 @@ vagrant ssh handy-ops-nonprod-cp -c "kubectl get nodes -o wide"
 ```
 
 The repo root is synced into the VM at `/lab`, so the VM can see the app and Kubernetes files.
+
+### 2a. Lighter option: start the shared cluster
+
+If you want a smaller local footprint, use the single shared cluster instead of bringing up both full environments.
+
+```powershell
+cd vagrant/single-cluster
+vagrant up
+vagrant ssh handy-ops-shared-cp -c "kubectl get nodes -o wide"
+vagrant ssh handy-ops-shared-cp -c "kubectl get namespaces"
+```
+
+This topology pre-creates the two environment namespaces:
+
+- `berryshop-nonprod`
+- `berryshop-prod`
 
 ### 3. Run the BerryShop API locally
 
@@ -169,6 +196,7 @@ See [docs/roadmap.md](docs/roadmap.md) for the fuller plan.
 ## What Is Included Today
 
 - local nonprod and prod Vagrant environments
+- a lighter single-cluster Vagrant environment with prod and nonprod namespaces
 - k3s install and worker join scripts
 - a minimal FastAPI backend for BerryShop
 - starter Kubernetes manifests with Kustomize overlays
