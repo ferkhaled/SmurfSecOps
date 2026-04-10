@@ -15,11 +15,6 @@ At the same time, my son had (and still has 😊) his favorite stuffed toy — *
 
 That’s where the idea came from.
 
-Instead of creating another “serious” and abstract lab, I decided to build something:
-- 🎨 **fun and memorable**
-- 🧠 **easy to visualize**
-- 📚 **engaging for learning**
-
 So the Smurf Village became:
 - your **Kubernetes environment**
 - your **applications**
@@ -29,8 +24,6 @@ And suddenly:
 - 👨‍💻 `clumsy-dev` makes mistakes  
 - 🛡️ `papa-sec` protects the system  
 - 😈 `gargamel` tries to break it  
-
-👉 Learning becomes a story — not just a checklist.
 
 ---
 
