@@ -4,13 +4,13 @@ SmurfSecOps Lab is a beginner-friendly, hands-on Kubernetes + DevSecOps learning
 
 It starts locally on your laptop using a lightweight Kubernetes cluster, then gradually evolves into a secure, production-like environment with DevSecOps practices fully integrated.
 
-🎯 Who is this for?
-🎓 Students
-👨‍💻 Kubernetes beginners
-🧑‍🔧 Junior DevOps / DevSecOps engineers
-🔐 CKA / CKS learners
-🧪 Anyone who wants practical, real-world skills
-💡 Why this project?
+🎯 Who is this for?\ 
+🎓 Students\ 
+👨‍💻 Kubernetes beginners\ 
+🧑‍🔧 Junior DevOps / DevSecOps engineers\ 
+🔐 CKA / CKS learners\ 
+🧪 Anyone who wants practical, real-world skills\ 
+💡 Why this project?\ 
 
 Most labs are:
 
