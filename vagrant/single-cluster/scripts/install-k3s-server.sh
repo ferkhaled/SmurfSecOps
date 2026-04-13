@@ -12,7 +12,7 @@ echo "[server] Installing k3s server for ${CLUSTER_NAME} on ${SERVER_IP}"
 
 if ! systemctl is-active --quiet k3s; then
   curl -sfL https://get.k3s.io | \
-    INSTALL_K3S_EXEC="server --node-name $(hostname) --write-kubeconfig-mode 644 --tls-san ${SERVER_IP} --node-ip ${SERVER_IP}" \
+    INSTALL_K3S_EXEC="server --node-name $(hostname) --write-kubeconfig-mode 644 --tls-san ${SERVER_IP} --node-ip ${SERVER_IP} --flannel-iface=eth1" \
     sh -
 fi
 
