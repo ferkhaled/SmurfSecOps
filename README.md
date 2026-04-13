@@ -4,15 +4,6 @@
 <!-- This is the showcase article that links all parts of the series together. -->
 <!-- It serves as the entry point for new readers discovering the series. -->
  SmurfSecOps Lab — A Complete DevSecOps Learning Journey 🍓
-Khaled Ferchichi
-Khaled Ferchichi
-3 min read
-·
-3 hours ago
-
-
-
-
 
 🧭 Introduction
 When learning Kubernetes and DevSecOps, most of us face the same problem:
