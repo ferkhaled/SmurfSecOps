@@ -26,10 +26,19 @@ fi
 K3S_TOKEN="$(cat "${TOKEN_FILE}")"
 
 if ! systemctl is-active --quiet k3s-agent; then
+  # Resolve the interface that holds AGENT_IP so flannel binds to the
+  # private VirtualBox network instead of the NAT interface.
+  FLANNEL_IFACE=$(ip -o -4 addr show | awk -v ip="${AGENT_IP}/" '$4 ~ ip {print $2; exit}')
+  if [ -z "${FLANNEL_IFACE}" ]; then
+    echo "[agent] Could not find interface for ${AGENT_IP}" >&2
+    exit 1
+  fi
+  echo "[agent] Using flannel interface: ${FLANNEL_IFACE}"
+
   curl -sfL https://get.k3s.io | \
     K3S_URL="https://${SERVER_IP}:6443" \
     K3S_TOKEN="${K3S_TOKEN}" \
-    INSTALL_K3S_EXEC="agent --node-name $(hostname) --node-ip ${AGENT_IP}" \
+    INSTALL_K3S_EXEC="agent --node-name $(hostname) --node-ip ${AGENT_IP} --flannel-iface=${FLANNEL_IFACE}" \
     sh -
 fi
 
