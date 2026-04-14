@@ -6,7 +6,13 @@ set -euo pipefail
 
 echo "[bootstrap] Waiting for the k3s API to become ready"
 
+RETRIES=60
 until k3s kubectl get nodes >/dev/null 2>&1; do
+  RETRIES=$((RETRIES - 1))
+  if [ "${RETRIES}" -le 0 ]; then
+    echo "[bootstrap] Timed out waiting for k3s API" >&2
+    exit 1
+  fi
   sleep 2
 done
 

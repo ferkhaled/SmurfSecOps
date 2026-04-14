@@ -10,6 +10,10 @@ TOKEN_FILE="/lab/vagrant/${CLUSTER_NAME}/node-token"
 
 echo "[server] Installing k3s server for ${CLUSTER_NAME} on ${SERVER_IP}"
 
+# Remove any stale token from a previous run so the agent cannot join
+# with an outdated credential on re-provisioning.
+rm -f "${TOKEN_FILE}"
+
 if ! systemctl is-active --quiet k3s; then
   curl -sfL https://get.k3s.io | \
     INSTALL_K3S_EXEC="server --node-name $(hostname) --write-kubeconfig-mode 644 --tls-san ${SERVER_IP} --node-ip ${SERVER_IP} --flannel-iface=eth1" \
@@ -30,7 +34,7 @@ cp /var/lib/rancher/k3s/server/node-token "${TOKEN_FILE}"
 # Make kubectl easy to use for the default vagrant user.
 mkdir -p /home/vagrant/.kube
 cp /etc/rancher/k3s/k3s.yaml /home/vagrant/.kube/config
-sed -i "s/127.0.0.1/${SERVER_IP}/" /home/vagrant/.kube/config
+sed -i "s/127.0.0.1/${SERVER_IP}/g" /home/vagrant/.kube/config
 chown -R vagrant:vagrant /home/vagrant/.kube
 
 echo "[server] k3s server is ready for ${CLUSTER_NAME}"
