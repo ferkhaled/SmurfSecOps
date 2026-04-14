@@ -15,8 +15,17 @@ echo "[server] Installing k3s server for ${CLUSTER_NAME} on ${SERVER_IP}"
 rm -f "${TOKEN_FILE}"
 
 if ! systemctl is-active --quiet k3s; then
+  # Resolve the interface that holds SERVER_IP (e.g. enp0s8 on Ubuntu 22.04,
+  # eth1 on older distros) so flannel binds to the private network NIC.
+  FLANNEL_IFACE=$(ip -o -4 addr show | awk -v ip="${SERVER_IP}/" '$4 ~ ip {print $2; exit}')
+  if [ -z "${FLANNEL_IFACE}" ]; then
+    echo "[server] Could not find interface for ${SERVER_IP}" >&2
+    exit 1
+  fi
+  echo "[server] Using flannel interface: ${FLANNEL_IFACE}"
+
   curl -sfL https://get.k3s.io | \
-    INSTALL_K3S_EXEC="server --node-name $(hostname) --write-kubeconfig-mode 644 --tls-san ${SERVER_IP} --node-ip ${SERVER_IP} --flannel-iface=eth1" \
+    INSTALL_K3S_EXEC="server --node-name $(hostname) --write-kubeconfig-mode 644 --tls-san ${SERVER_IP} --node-ip ${SERVER_IP} --flannel-iface=${FLANNEL_IFACE}" \
     sh -
 fi
 
