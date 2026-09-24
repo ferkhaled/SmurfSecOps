@@ -1,5 +1,7 @@
 # 🛡️ SmurfSecOps Lab — A Complete DevSecOps Learning Journey 🍓
 
+Khaled Ferchichi · Apr 10, 2026
+
 > 📖 Published on Medium: [SmurfSecOps Lab — A Complete DevSecOps Learning Journey](https://medium.com/@ferkhaled2004/%EF%B8%8F-smurfsecops-lab-a-complete-devsecops-learning-journey-2ae0404bce41)
 
 ## 🧭 Introduction
@@ -12,9 +14,9 @@ When learning Kubernetes and DevSecOps, most of us face the same problem:
 
 So instead of just preparing for certifications like CKA / CKS, I decided to build something different:
 
-**A complete, hands-on learning playground — from zero to a real DevSecOps workflow.**
+A complete, hands-on learning playground — from zero to a real DevSecOps workflow.
 
-This is how SmurfSecOps Lab was born.
+This is how [SmurfSecOps Lab](https://github.com/ferkhaled/SmurfSecOps) was born.
 
 ## 🤔 Why Smurfs? 😄
 
@@ -24,10 +26,10 @@ That became the inspiration.
 
 Instead of another "serious" lab, I built a story-driven environment where:
 
-- 👨‍💻 **clumsy-dev** writes code (and makes mistakes 😅)
-- ⚙️ **handy-ops** deploys and automates
-- 🛡️ **papa-sec** protects the system
-- 😈 **gargamel** tries to break it
+- 👨‍💻 `clumsy-dev` writes code (and makes mistakes 😅)
+- ⚙️ `handy-ops` deploys and automates
+- 🛡️ `papa-sec` protects the system
+- 😈 `gargamel` tries to break it
 
 👉 Learning becomes a story — not just a checklist.
 
@@ -59,15 +61,15 @@ One of the key objectives of this project is simplicity without losing real-worl
 
 Here is the stack used:
 
-- ☸️ Kubernetes — k3s
-- 🖥️ Local Environment — Vagrant + VirtualBox
-- 🐍 Application — Python + FastAPI
-- 📦 Containerization — Docker
-- 🔄 CI/CD — GitHub Actions
-- 🔍 SAST — Semgrep
-- 🛡️ Vulnerability Scanning — Trivy
-- 🌐 DAST — OWASP ZAP
-- 🚨 Runtime Security — Falco
+☸️ Kubernetes — k3s\
+🖥️ Local Environment — Vagrant + VirtualBox\
+🐍 Application — Python + FastAPI\
+📦 Containerization — Docker\
+🔄 CI/CD — GitHub Actions\
+🔍 SAST — Semgrep\
+🛡️ Vulnerability Scanning — Trivy\
+🌐 DAST — OWASP ZAP\
+🚨 Runtime Security — Falco
 
 ## 🗺️ Roadmap of the Series
 
@@ -83,29 +85,35 @@ We start by setting up a local Kubernetes environment.
 
 We build a simple application (BerryShop 🍓) that will be used across the lab.
 
-👉 Part 2 — Build the Application _(coming soon)_
+👉 Part 2 — Build the Application\
+`👉 [coming soon]`
 
 ### 🟡 Phase 3 — Kubernetes Deployment
 
 We deploy the application and introduce environment separation:
 
-👉 Part 3 — Deploy to Kubernetes _(coming soon)_
+👉 Part 3 — Deploy to Kubernetes\
+`👉 [coming soon]`
 
 ### 🟠 Phase 4 — DevSecOps Pipeline
 
-👉 Part 4 — CI/CD Pipeline _(coming soon)_
+👉 Part 4 — CI/CD Pipeline\
+`👉 [coming soon]`
 
 ### 🔴 Phase 5 — Security Hardening
 
-👉 Part 5 — Kubernetes Hardening _(coming soon)_
+👉 Part 5 — Kubernetes Hardening\
+`👉 [coming soon]`
 
 ### ⚫ Phase 6 — Attacks & Detection
 
-👉 Part 6 — Attack Simulation & Detection _(coming soon)_
+👉 Part 6 — Attack Simulation & Detection\
+`👉 [coming soon]`
 
 ### 🟣 Phase 7 — Evolution
 
-👉 Part 7 — Cloud & Terraform _(coming soon)_
+👉 Part 7 — Cloud & Terraform\
+`👉 [coming soon]`
 
 ## 🧠 How to use this series
 
@@ -146,5 +154,9 @@ We are entering a new phase — where building, learning, and experimenting are 
 
 👉 The goal is not just to use these tools, but to understand and build meaningful, secure systems with them.
 
-🍓 Without security, Gargamel steals the Smurfberries 😈
+🍓 Without security, Gargamel steals the Smurfberries 😈\
 🛡️ With DevSecOps, the village stays safe
+
+---
+
+Tags: Kubernetes · DevSecOps
